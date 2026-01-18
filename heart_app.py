@@ -109,8 +109,20 @@ if uploaded_file is not None:
         if scaler is None:
             st.stop()
         
+        # Get expected feature names from scaler
+        expected_features = scaler.feature_names_in_
+        
+        # Align test data with training features
+        # Add missing columns with 0s
+        for col in expected_features:
+            if col not in X_encoded.columns:
+                X_encoded[col] = 0
+        
+        # Remove extra columns not in training
+        X_encoded = X_encoded[expected_features]
+        
         X_scaled = scaler.transform(X_encoded)
-        X_scaled = pd.DataFrame(X_scaled, columns=X_encoded.columns)
+        X_scaled = pd.DataFrame(X_scaled, columns=expected_features)
         
         # Load selected model
         model = load_model(selected_model)
@@ -166,7 +178,12 @@ if uploaded_file is not None:
         # Classification Report
         st.header("📋 Classification Report")
         
-        report = classification_report(y, y_pred, output_dict=True)
+        # Get classification report with custom target names
+        report = classification_report(
+            y, y_pred, 
+            target_names=['No Disease (0)', 'Disease (1)'],
+            output_dict=True
+        )
         report_df = pd.DataFrame(report).transpose()
         
         st.dataframe(
