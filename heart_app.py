@@ -258,6 +258,7 @@ else:
     
     # Create comparison table
     comparison_data = {
+        'S.No': [1, 2, 3, 4, 5, 6],
         'Model': ['Logistic Regression', 'Decision Tree', 'KNN', 'Naive Bayes', 
                   'Random Forest', 'XGBoost'],
         'Accuracy': [0.8859, 0.7880, 0.8859, 0.9130, 0.8696, 0.8587],
@@ -269,6 +270,7 @@ else:
     }
     
     comparison_df = pd.DataFrame(comparison_data)
+    comparison_df = comparison_df.set_index('S.No')
     
     st.dataframe(
         comparison_df.style.background_gradient(cmap='RdYlGn', subset=comparison_df.columns[1:]),
